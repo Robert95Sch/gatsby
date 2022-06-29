@@ -25,6 +25,20 @@ jobs:
         with:
           submodules: 'recursive'
 
+      - name: Setup Node
+        if: ${{ steps.project.outputs.deployment-enabled == 'true' }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: v16.x
+
+      - name: Build Node assets
+        env:
+          CI: true
+          SITE_URL: ${{ steps.project.outputs.site-url }}
+        run: |
+          npm install --global yarn
+          yarn install --frozen-lockfile
+
       - name: Deploy to IONOS
         if: ${{ steps.project.outputs.deployment-enabled == 'true' }}
         uses: ionos-deploy-now/deploy-to-ionos-action@v1
